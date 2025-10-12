@@ -2,27 +2,33 @@ import 'package:go_router/go_router.dart';
 import 'package:melodi_ai/pages/completion_page.dart';
 import 'package:melodi_ai/pages/emotion_input_page.dart';
 import 'package:melodi_ai/pages/player_page.dart';
+// NEW: Import 2 màn hình mới
+import 'package:melodi_ai/pages/login_page.dart';
+import 'package:melodi_ai/pages/signup_page.dart';
 
-// Cấu hình "bản đồ" cho ứng dụng
 final GoRouter appRouter = GoRouter(
-  // initialLocation là địa chỉ bắt đầu khi mở ứng dụng
-  initialLocation: '/',
-  // routes là danh sách tất cả các "địa chỉ" và "địa điểm"
+  initialLocation: '/login',
   routes: [
-    // Địa chỉ gốc của ứng dụng
     GoRoute(
       path: '/',
       builder: (context, state) => const EmotionInputPage(),
     ),
-    // Địa chỉ của màn hình Player
     GoRoute(
       path: '/player',
       builder: (context, state) => const PlayerPage(),
     ),
-    // Địa chỉ của màn hình Completion
     GoRoute(
       path: '/completion',
       builder: (context, state) => const CompletionPage(),
+    ),
+    // NEW: Thêm 2 địa chỉ cho luồng xác thực
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => const LoginPage(),
+    ),
+    GoRoute(
+      path: '/signup',
+      builder: (context, state) => const SignUpPage(),
     ),
   ],
 );
