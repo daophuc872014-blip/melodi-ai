@@ -1,31 +1,33 @@
 name: melodi_ai
 description: "A new Flutter project."
-publish_to: 'none' 
+publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.4.1 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
-# CÁC DỤNG CỤ MÀ CHÚNG TA ĐÃ CÀI ĐẶT
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
-  just_audio: ^0.9.36
-  go_router: ^14.1.0
-  http: ^1.2.1
-  flutter_dotenv: ^5.1.0
+
+  # Các thư viện mà code của chúng ta cần
+  cupertino_icons: ^1.0.8
+  go_router: ^14.1.4 # Đã thêm
+  just_audio: ^0.9.36 # Đã thêm
+  rxdart: ^0.28.0 # Đã thêm
+  http: ^1.2.1 # Đã thêm
+  flutter_dotenv: ^5.1.0 # Đã thêm
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
 
-# PHẦN QUAN TRỌNG NHẤT MÀ CHÚNG TA ĐÃ SỬA
+  flutter_lints: ^4.0.0
+
 flutter:
   uses-material-design: true
 
-  # KHAI BÁO TÀI SẢN (NHÀ KHO)
+  # Khai báo các tài sản của chúng ta
   assets:
     - assets/audio/
-    - .env
+    - .env 

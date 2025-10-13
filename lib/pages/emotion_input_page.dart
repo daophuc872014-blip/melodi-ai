@@ -17,6 +17,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
   late final AnimationController _waveController;
   late final AnimationController _colorController;
   late final AnimationController _pulseController;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -61,16 +62,25 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     });
   }
 
-  void _createMelody() {
+  Future<void> _createMelody() async {
     final currentEmotion = _textController.text;
-    if (currentEmotion.isNotEmpty) {
-      print('Tạo giai điệu cho cảm xúc: $currentEmotion');
-      context.push('/player');
-    } else {
-      print('Vui lòng chọn hoặc nhập một cảm xúc.');
+    if (currentEmotion.isEmpty || _isLoading) return;
+
+    setState(() { _isLoading = true; });
+
+    try {
+      // Tạm thời comment lại phần gọi API để kiểm tra giao diện trước
+      // final suggestion = await AIService().getMusicSuggestion(currentEmotion);
+      // print('Kết quả từ Gemini: $suggestion');
+      await Future.delayed(const Duration(seconds: 2)); // Giả lập thời gian chờ
+      if (mounted) context.push('/player');
+    } catch (e) {
+      print('Có lỗi xảy ra: $e');
+    } finally {
+      if (mounted) setState(() { _isLoading = false; });
     }
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -79,15 +89,8 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF0F3057),
-              Color(0xFF00587A),
-              Color(0xFFE75480),
-              Color(0xFFFF8C69),
-            ],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            stops: [0.0, 0.3, 0.85, 1.0],
+            colors: [Color(0xFF0F3057), Color(0xFF00587A), Color(0xFFE75480), Color(0xFFFF8C69)],
+            begin: Alignment.topCenter, end: Alignment.bottomCenter, stops: [0.0, 0.3, 0.85, 1.0],
           ),
         ),
         child: Stack(
@@ -117,11 +120,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
   Widget _buildCircularWave() {
     const int barCount = 60;
     const double visualizerRadius = 112; 
-
-    final alignmentTween = AlignmentTween(
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    );
+    final alignmentTween = AlignmentTween(begin: Alignment.topCenter, end: Alignment.bottomCenter);
     
     return AnimatedBuilder(
       animation: Listenable.merge([_waveController, _colorController, _pulseController]),
@@ -146,7 +145,6 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
             ...List.generate(barCount, (index) {
               final random = Random(index);
               final animationValue = sin((_waveController.value * 2 * pi) + (random.nextDouble() * pi));
-
               return Transform.rotate(
                 angle: (index / barCount) * 2 * pi,
                 child: Transform.translate(
@@ -162,11 +160,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
                         gradient: LinearGradient(
                           begin: alignmentTween.evaluate(_colorController),
                           end: alignmentTween.transform(-1.0),
-                          colors: const [
-                            Color(0xFF00587A),
-                            Color(0xFFE75480),
-                            Color(0xFFFF8C69),
-                          ],
+                          colors: const [Color(0xFF00587A), Color(0xFFE75480), Color(0xFFFF8C69)],
                         ),
                       ),
                     ),
@@ -226,31 +220,16 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
           children: [
             const Text(
               'Melody AI',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                letterSpacing: 1.2,
-                color: Colors.white,
-              ),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 1.2, color: Colors.white),
             ),
             const SizedBox(height: 64),
             const Column(
               children: [
-                Text(
-                  'Xin chào!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
+                Text( 'Xin chào!', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white)),
                 SizedBox(height: 8),
-                Text(
-                  '"Mỗi Cảm Xúc Đều Xứng Đáng Có Một Giai Điệu"',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white),
-                ),
+                Text( '"Mỗi Cảm Xúc Đều Xứng Đáng Có Một Giai Điệu"', textAlign: TextAlign.center, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: Colors.white)),
                 SizedBox(height: 8),
-                Text(
-                  '*Hãy cứ là chính mình, tôi ở đây để lắng nghe*',
-                  style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white70),
-                ),
+                Text( '*Hãy cứ là chính mình, tôi ở đây để lắng nghe*', style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.white70)),
               ],
             ),
             const Spacer(),
@@ -278,10 +257,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
-          'Giai điệu bạn đang tìm kiếm có cảm xúc như thế nào?',
-          style: TextStyle(color: Colors.white, fontSize: 14),
-        ),
+        const Text('Giai điệu bạn đang tìm kiếm có cảm xúc như thế nào?', style: TextStyle(color: Colors.white, fontSize: 14)),
         const SizedBox(height: 20),
         SizedBox(
           height: 36,
@@ -304,9 +280,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         TextField(
           controller: _textController,
           onChanged: (text) {
-            setState(() {
-              _selectedEmotion = emotions.contains(text) ? text : null;
-            });
+            setState(() { _selectedEmotion = emotions.contains(text) ? text : null; });
           },
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white),
@@ -315,64 +289,32 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
             hintStyle: TextStyle(color: Colors.white.withAlpha((255 * 0.6).toInt())),
             filled: true,
             fillColor: Colors.white.withAlpha((255 * 0.1).toInt()),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Colors.white.withAlpha((255 * 0.3).toInt())),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Colors.white.withAlpha((255 * 0.3).toInt())),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(color: Colors.white),
-            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(30), borderSide: BorderSide.none),
           ),
         ),
         const SizedBox(height: 24),
-        ElevatedButton(
-          onPressed: _createMelody,
-          style: ElevatedButton.styleFrom(
-            minimumSize: const Size(double.infinity, 58),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            padding: EdgeInsets.zero,
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-          ),
-          child: Ink(
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF43A047),
-                  Color(0xFF76FF03),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(30),
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromRGBO(118, 255, 3, 0.4),
-                  blurRadius: 15,
-                  spreadRadius: 2,
-                  offset: Offset(0, 3),
-                )
-              ],
+        SizedBox(
+          width: double.infinity,
+          height: 58,
+          child: ElevatedButton(
+            onPressed: _createMelody,
+            style: ElevatedButton.styleFrom(
+              padding: EdgeInsets.zero, backgroundColor: Colors.transparent, shadowColor: Colors.transparent,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             ),
-            child: Container(
-              alignment: Alignment.center,
-              child: const Text(
-                'Tạo Giai Điệu',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  shadows: [
-                    Shadow(
-                      blurRadius: 5.0,
-                      color: Colors.black38,
-                      offset: Offset(1.0, 1.0),
-                    ),
-                  ],
-                ),
+            child: Ink(
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(colors: [Color(0xFF43A047), Color(0xFF76FF03)]),
+                borderRadius: BorderRadius.circular(30),
+              ),
+              child: Container(
+                alignment: Alignment.center,
+                child: _isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text(
+                        'Tạo Giai Điệu',
+                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
               ),
             ),
           ),
