@@ -9,7 +9,20 @@ final GoRouter appRouter = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (context, state) => const EmotionInputPage()),
-    GoRoute(path: '/player', builder: (context, state) => const PlayerPage()),
+    
+    // ĐÂY LÀ PHIÊN BẢN ĐÃ ĐƯỢC NÂNG CẤP
+    GoRoute(
+      path: '/player',
+      builder: (context, state) {
+        // Lấy "gói hàng" được gửi qua tham số 'extra'
+        // Chúng ta ép kiểu nó thành Map<String, dynamic> để Dart hiểu
+        final musicSuggestion = state.extra as Map<String, dynamic>;
+        
+        // Trả về PlayerPage và truyền "gói hàng" vào "hòm thư" musicSuggestion
+        return PlayerPage(musicSuggestion: musicSuggestion);
+      },
+    ),
+    
     GoRoute(path: '/completion', builder: (context, state) => const CompletionPage()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(path: '/signup', builder: (context, state) => const SignUpPage()),

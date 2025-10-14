@@ -1,10 +1,9 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:rxdart/rxdart.dart';
-import 'dart:math';
 
-// Lớp helper để chứa dữ liệu từ các stream
 class PositionData {
   final Duration position;
   final Duration bufferedPosition;
@@ -13,7 +12,10 @@ class PositionData {
 }
 
 class PlayerPage extends StatefulWidget {
-  const PlayerPage({super.key});
+  // DỮ LIỆU ĐÃ ĐƯỢC THÊM VÀO ĐÂY
+  final Map<String, dynamic> musicSuggestion;
+
+  const PlayerPage({super.key, required this.musicSuggestion});
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
@@ -24,16 +26,13 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
   late final AnimationController _rotationController;
   late final AnimationController _waveController;
 
-  // Stream kết hợp để lắng nghe dữ liệu từ trình phát
   Stream<PositionData> get _positionDataStream =>
       Rx.combineLatest3<Duration, Duration, Duration?, PositionData>(
         _player.positionStream,
         _player.bufferedPositionStream,
         _player.durationStream,
         (position, bufferedPosition, duration) => PositionData(
-          position,
-          bufferedPosition,
-          duration ?? Duration.zero,
+          position, bufferedPosition, duration ?? Duration.zero,
         ),
       );
 
@@ -42,14 +41,9 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
     super.initState();
     _initAudioPlayer();
 
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 20), vsync: this,
-    );
-    _waveController = AnimationController(
-      duration: const Duration(milliseconds: 800), vsync: this,
-    );
+    _rotationController = AnimationController(duration: const Duration(seconds: 20), vsync: this);
+    _waveController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
-    // Lắng nghe trạng thái của trình phát thật để điều khiển animation
     _player.playerStateStream.listen((state) {
       if (mounted) {
         if (state.playing) {
@@ -174,11 +168,15 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
   }
 
   Widget _buildSongInfo() {
-    return const Column(
+    return Column(
       children: [
-        Text('Sáng tác của Bạn', style: TextStyle(color: Colors.white70, fontSize: 14)),
-        SizedBox(height: 8),
-        Text('Gửi Quang, Ánh Sáng Của Ba Mẹ', textAlign: TextAlign.center, style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        const Text('Sáng tác của Bạn', style: TextStyle(color: Colors.white70, fontSize: 14)),
+        const SizedBox(height: 8),
+        Text(
+          widget.musicSuggestion['suggestedTitle'] ?? 'Không có tiêu đề',
+          textAlign: TextAlign.center,
+          style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

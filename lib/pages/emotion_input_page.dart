@@ -55,8 +55,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     try {
       final suggestion = await AIService().getMusicSuggestion(currentEmotion);
       print('>>> KẾT QUẢ TỪ GEMINI: $suggestion');
-      // SỬA LỖI 2: Chức năng chuyển trang đã được khôi phục
-      if (mounted) context.push('/player');
+      if (mounted) context.push('/player', extra: suggestion);
     } catch (e) {
       print('>>> ĐÃ CÓ LỖI XẢY RA: $e');
       if (mounted) {
@@ -91,7 +90,6 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     );
   }
   
-  // HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT ĐỂ SỬA LỖI HÌNH ẢNH
   Widget _buildCentralVisualizer() {
     return Stack(
       alignment: Alignment.center,
@@ -99,7 +97,6 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         _buildCircularWave(),
         RotationTransition(
           turns: _rotationController,
-          // SỬA LỖI 1: Sử dụng logo placeholder từ code, không dùng link mạng
           child: _buildLogoPlaceholder(),
         ),
       ],
@@ -162,7 +159,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
       },
     );
   }
-
+  
   Widget _buildLogoPlaceholder() {
     return Container(
       width: 160,
