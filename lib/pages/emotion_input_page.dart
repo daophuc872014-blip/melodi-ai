@@ -1,10 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:melodi_ai/services/ai_service.dart';
 
 class EmotionInputPage extends StatefulWidget {
   const EmotionInputPage({super.key});
-
   @override
   State<EmotionInputPage> createState() => _EmotionInputPageState();
 }
@@ -12,37 +12,21 @@ class EmotionInputPage extends StatefulWidget {
 class _EmotionInputPageState extends State<EmotionInputPage> with TickerProviderStateMixin {
   late final TextEditingController _textController;
   String? _selectedEmotion;
-
   late final AnimationController _rotationController;
   late final AnimationController _waveController;
   late final AnimationController _colorController;
   late final AnimationController _pulseController;
+  
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     _textController = TextEditingController();
-
-    _rotationController = AnimationController(
-      duration: const Duration(seconds: 30),
-      vsync: this,
-    )..repeat();
-
-    _waveController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
-      vsync: this,
-    )..repeat(reverse: true);
-
-    _colorController = AnimationController(
-      duration: const Duration(seconds: 4),
-      vsync: this,
-    )..repeat();
-      
-    _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
-      vsync: this,
-    )..repeat(reverse: true);
+    _rotationController = AnimationController(duration: const Duration(seconds: 30), vsync: this)..repeat();
+    _waveController = AnimationController(duration: const Duration(milliseconds: 1200), vsync: this)..repeat(reverse: true);
+    _colorController = AnimationController(duration: const Duration(seconds: 4), vsync: this)..repeat();
+    _pulseController = AnimationController(duration: const Duration(seconds: 2), vsync: this)..repeat(reverse: true);
   }
 
   @override
@@ -69,13 +53,17 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     setState(() { _isLoading = true; });
 
     try {
-      // Tạm thời comment lại phần gọi API để kiểm tra giao diện trước
-      // final suggestion = await AIService().getMusicSuggestion(currentEmotion);
-      // print('Kết quả từ Gemini: $suggestion');
-      await Future.delayed(const Duration(seconds: 2)); // Giả lập thời gian chờ
+      final suggestion = await AIService().getMusicSuggestion(currentEmotion);
+      print('>>> KẾT QUẢ TỪ GEMINI: $suggestion');
+      // SỬA LỖI 2: Chức năng chuyển trang đã được khôi phục
       if (mounted) context.push('/player');
     } catch (e) {
-      print('Có lỗi xảy ra: $e');
+      print('>>> ĐÃ CÓ LỖI XẢY RA: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không thể tạo giai điệu: ${e.toString()}')),
+        );
+      }
     } finally {
       if (mounted) setState(() { _isLoading = false; });
     }
@@ -85,8 +73,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
+        width: double.infinity, height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF0F3057), Color(0xFF00587A), Color(0xFFE75480), Color(0xFFFF8C69)],
@@ -104,6 +91,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
     );
   }
   
+  // HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT ĐỂ SỬA LỖI HÌNH ẢNH
   Widget _buildCentralVisualizer() {
     return Stack(
       alignment: Alignment.center,
@@ -111,6 +99,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         _buildCircularWave(),
         RotationTransition(
           turns: _rotationController,
+          // SỬA LỖI 1: Sử dụng logo placeholder từ code, không dùng link mạng
           child: _buildLogoPlaceholder(),
         ),
       ],
@@ -173,7 +162,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
       },
     );
   }
-  
+
   Widget _buildLogoPlaceholder() {
     return Container(
       width: 160,
@@ -279,9 +268,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         const SizedBox(height: 20),
         TextField(
           controller: _textController,
-          onChanged: (text) {
-            setState(() { _selectedEmotion = emotions.contains(text) ? text : null; });
-          },
+          onChanged: (text) { setState(() { _selectedEmotion = emotions.contains(text) ? text : null; }); },
           textAlign: TextAlign.center,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
@@ -297,10 +284,11 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
           width: double.infinity,
           height: 58,
           child: ElevatedButton(
-            onPressed: _createMelody,
+            onPressed: _isLoading ? null : _createMelody,
             style: ElevatedButton.styleFrom(
               padding: EdgeInsets.zero, backgroundColor: Colors.transparent, shadowColor: Colors.transparent,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              disabledBackgroundColor: Colors.grey.withOpacity(0.2),
             ),
             child: Ink(
               decoration: BoxDecoration(
@@ -310,7 +298,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
               child: Container(
                 alignment: Alignment.center,
                 child: _isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
+                    ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 3))
                     : const Text(
                         'Tạo Giai Điệu',
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
