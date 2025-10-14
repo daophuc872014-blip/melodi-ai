@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:melodi_ai/routes/app_router.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-Future<void> main() async {
-  await dotenv.load(fileName: ".env");
+void main() {
+  // Không cần load file .env nữa, ứng dụng khởi động ngay lập tức!
   runApp(const MyApp());
 }
 
@@ -23,4 +22,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-}
+} 

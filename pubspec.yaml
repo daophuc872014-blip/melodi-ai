@@ -9,18 +9,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  
+  envied: ^0.5.4+1
   cupertino_icons: ^1.0.8
   go_router: ^16.2.4
   just_audio: ^0.10.5
   rxdart: ^0.28.0
   http: ^1.5.0
-  flutter_dotenv: ^6.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  envied_generator: ^0.5.4
+  build_runner: ^2.4.9
   flutter_lints: ^4.0.0
 
 flutter:
@@ -28,4 +28,5 @@ flutter:
 
   assets:
     - assets/audio/
+    - assets/images/
     - .env

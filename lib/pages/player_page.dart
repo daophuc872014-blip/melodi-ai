@@ -12,10 +12,14 @@ class PositionData {
 }
 
 class PlayerPage extends StatefulWidget {
-  // DỮ LIỆU ĐÃ ĐƯỢC THÊM VÀO ĐÂY
   final Map<String, dynamic> musicSuggestion;
+  final String audioUrl;
 
-  const PlayerPage({super.key, required this.musicSuggestion});
+  const PlayerPage({
+    super.key, 
+    required this.musicSuggestion, 
+    required this.audioUrl
+  });
 
   @override
   State<PlayerPage> createState() => _PlayerPageState();
@@ -32,7 +36,9 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
         _player.bufferedPositionStream,
         _player.durationStream,
         (position, bufferedPosition, duration) => PositionData(
-          position, bufferedPosition, duration ?? Duration.zero,
+          position,
+          bufferedPosition,
+          duration ?? Duration.zero,
         ),
       );
 
@@ -40,7 +46,6 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAudioPlayer();
-
     _rotationController = AnimationController(duration: const Duration(seconds: 20), vsync: this);
     _waveController = AnimationController(duration: const Duration(milliseconds: 800), vsync: this);
 
@@ -59,9 +64,9 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
 
   Future<void> _initAudioPlayer() async {
     try {
-      await _player.setAsset('assets/audio/sample.mp3');
+      await _player.setUrl(widget.audioUrl);
     } catch (e) {
-      print("Lỗi khi load file audio: $e");
+      print("Lỗi khi load file audio từ URL: $e");
     }
   }
 
@@ -89,8 +94,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        width: double.infinity,
-        height: double.infinity,
+        width: double.infinity, height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [Color(0xFF0F3057), Color(0xFF00587A), Color(0xFFE75480), Color(0xFFFF8C69)],
@@ -102,11 +106,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildVisualizer(),
-                _buildSongInfo(),
-                _buildPlayerControls(),
-              ],
+              children: [_buildVisualizer(), _buildSongInfo(), _buildPlayerControls()],
             ),
           ),
         ),
@@ -122,11 +122,12 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
         RotationTransition(
           turns: _rotationController,
           child: Container(
-            width: 160, height: 160,
-            decoration: BoxDecoration(
+            width: 160,
+            height: 160,
+            decoration: const BoxDecoration(
               shape: BoxShape.circle,
-              image: const DecorationImage(
-                image: NetworkImage('https://picsum.photos/seed/melodi-ai/200'),
+              image: DecorationImage(
+                image: AssetImage('assets/images/visualizer.png'),
                 fit: BoxFit.cover,
               ),
             ),
@@ -154,8 +155,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
                   scaleY: 0.2 + animationValue.abs() * 0.8,
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    width: 3,
-                    height: 30 + (Random(index).nextDouble() * 10),
+                    width: 3, height: 30 + (Random(index).nextDouble() * 10),
                     decoration: BoxDecoration(color: const Color(0xFFFF8C69), borderRadius: BorderRadius.circular(2)),
                   ),
                 ),
@@ -180,7 +180,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
       ],
     );
   }
-  
+
   Widget _buildPlayerControls() {
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -206,8 +206,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
         ),
         const SizedBox(height: 24),
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly, crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             IconButton(onPressed: () {}, icon: const Icon(Icons.skip_previous_rounded, color: Colors.white, size: 36)),
             _buildPlayPauseButton(),
@@ -226,29 +225,23 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
   Widget _buildProgressBar(PositionData? positionData) {
     final position = positionData?.position ?? Duration.zero;
     final duration = positionData?.duration ?? Duration.zero;
-    
     return LayoutBuilder(
       builder: (context, constraints) {
         final double totalWidth = constraints.maxWidth;
-        final double progressValue = (duration.inMilliseconds > 0)
-            ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0)
-            : 0.0;
-        
+        final double progressValue = (duration.inMilliseconds > 0) ? (position.inMilliseconds / duration.inMilliseconds).clamp(0.0, 1.0) : 0.0;
         return GestureDetector(
           onHorizontalDragUpdate: (details) {
             final seekPosition = details.localPosition.dx / totalWidth;
-            final newPosition = duration * seekPosition;
-            _player.seek(newPosition);
+            _player.seek(duration * seekPosition);
           },
           child: Stack(
             clipBehavior: Clip.none,
             children: [
-              Container( height: 6, decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(3))),
-              Container( width: totalWidth * progressValue, height: 6, decoration: BoxDecoration(color: const Color(0xFFFFC779), borderRadius: BorderRadius.circular(3))),
+              Container(height: 6, decoration: BoxDecoration(color: Colors.white.withOpacity(0.2), borderRadius: BorderRadius.circular(3))),
+              Container(width: totalWidth * progressValue, height: 6, decoration: BoxDecoration(color: const Color(0xFFFFC779), borderRadius: BorderRadius.circular(3))),
               Positioned(
-                left: (totalWidth * progressValue) - 8,
-                top: -5,
-                child: Container( width: 16, height: 16, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
+                left: (totalWidth * progressValue) - 8, top: -5,
+                child: Container(width: 16, height: 16, decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle)),
               )
             ],
           ),
@@ -266,7 +259,7 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
         final playing = playerState?.playing;
 
         if (processingState == ProcessingState.loading || processingState == ProcessingState.buffering) {
-          return const SizedBox( width: 70, height: 70, child: CircularProgressIndicator(color: Colors.white));
+          return const SizedBox(width: 70, height: 70, child: CircularProgressIndicator(color: Colors.white));
         } else if (playing != true) {
           return _buildPlayButton(Icons.play_arrow_rounded, _player.play);
         } else if (processingState != ProcessingState.completed) {
@@ -281,16 +274,8 @@ class _PlayerPageState extends State<PlayerPage> with TickerProviderStateMixin {
   Widget _buildPlayButton(IconData icon, VoidCallback onPressed) {
     return Container(
       width: 70, height: 70,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(
-          colors: [Color(0xFFFF8C69), Color(0xFFE75480)],
-        ),
-      ),
-      child: IconButton(
-        onPressed: onPressed,
-        icon: Icon(icon, color: Colors.white, size: 48),
-      ),
+      decoration: const BoxDecoration(shape: BoxShape.circle, gradient: LinearGradient(colors: [Color(0xFFFF8C69), Color(0xFFE75480)])),
+      child: IconButton(onPressed: onPressed, icon: Icon(icon, color: Colors.white, size: 48)),
     );
   }
 }
