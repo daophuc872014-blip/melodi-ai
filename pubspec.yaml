@@ -10,13 +10,13 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Các thư viện mà code của chúng ta cần
   cupertino_icons: ^1.0.8
-  go_router: ^14.1.4 # Đã thêm
-  just_audio: ^0.9.36 # Đã thêm
-  rxdart: ^0.28.0 # Đã thêm
-  http: ^1.2.1 # Đã thêm
-  flutter_dotenv: ^5.1.0 # Đã thêm
+  go_router: ^14.1.4
+  http: ^1.2.1
+  flutter_dotenv: ^5.1.0
+  audioplayers: ^6.5.1
+  just_audio: ^0.10.5
+  rxdart: ^0.28.0
 
 dev_dependencies:
   flutter_test:
@@ -27,7 +27,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # Khai báo các tài sản của chúng ta
   assets:
     - assets/audio/
     - .env 
