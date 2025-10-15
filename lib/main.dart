@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:melodi_ai/routes/app_router.dart';
 import 'package:melodi_ai/core/service_locator.dart'; // <-- 1. Import "Văn phòng Quản lý"
+import 'package:melodi_ai/routes/app_router.dart';
 
 void main() {
-  // Với "envied", chúng ta không cần async/await hay dotenv.load nữa
-  
   // 2. "Mở cửa văn phòng" trước khi chạy ứng dụng
   setupLocator(); 
   
