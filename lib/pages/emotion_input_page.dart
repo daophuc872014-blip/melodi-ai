@@ -1,5 +1,3 @@
-// Dán toàn bộ nội dung file emotion_input_page.dart hoàn chỉnh vào đây
-// (Đây là phiên bản đầy đủ nhất, đã có ClipOval)
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -100,25 +98,24 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         _buildCircularWave(),
         RotationTransition(
           turns: _rotationController,
-          child: ClipOval( // THÊM KHUÔN CẮT HÌNH TRÒN
+          child: ClipOval(
             child: Image.asset(
               'assets/images/visualizer.png',
               width: 224,
               height: 224,
-              fit: BoxFit.cover, // Dùng BoxFit.cover để lấp đầy hình tròn
+              fit: BoxFit.cover,
             ),
           ),
         ),
       ],
     );
   }
-
-  // ... (Các hàm còn lại giữ nguyên)
+  
   Widget _buildCircularWave(){
       const int barCount = 60;
       const double visualizerRadius = 112; 
       final alignmentTween = AlignmentTween(begin: Alignment.topCenter, end: Alignment.bottomCenter);
-
+      
       return AnimatedBuilder(
         animation: Listenable.merge([_waveController, _colorController, _pulseController]),
         builder: (context, child) {
@@ -199,6 +196,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
       );
   }
 
+  // HÀM NÀY ĐÃ ĐƯỢC CẬP NHẬT HOÀN CHỈNH
   Widget _buildEmotionInputArea() {
       final emotions = ['Vui', 'Buồn', 'Bình yên', 'Tức giận', 'Lãng mạn'];
       final defaultTagStyle = OutlinedButton.styleFrom(
@@ -232,6 +230,7 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
                   child: Text(emotion),
                 );
               },
+              // PHẦN BỊ THIẾU ĐÃ ĐƯỢC BỔ SUNG Ở ĐÂY
               separatorBuilder: (context, index) => const SizedBox(width: 8),
             ),
           ),
@@ -280,4 +279,4 @@ class _EmotionInputPageState extends State<EmotionInputPage> with TickerProvider
         ],
       );
   }
-}
+} 

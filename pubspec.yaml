@@ -15,12 +15,13 @@ dependencies:
   just_audio: ^0.10.5
   rxdart: ^0.28.0
   http: ^1.5.0
+  get_it: ^8.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  envied_generator: ^0.5.4
-  build_runner: ^2.4.9
+  envied_generator: ^1.0.0
+  build_runner: ^2.4.13
   flutter_lints: ^4.0.0
 
 flutter:

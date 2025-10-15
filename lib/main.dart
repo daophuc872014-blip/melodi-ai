@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:melodi_ai/routes/app_router.dart';
+import 'package:melodi_ai/core/service_locator.dart'; // <-- 1. Import "Văn phòng Quản lý"
 
 void main() {
-  // Không cần load file .env nữa, ứng dụng khởi động ngay lập tức!
+  // Với "envied", chúng ta không cần async/await hay dotenv.load nữa
+  
+  // 2. "Mở cửa văn phòng" trước khi chạy ứng dụng
+  setupLocator(); 
+  
   runApp(const MyApp());
 }
 
@@ -22,4 +27,4 @@ class MyApp extends StatelessWidget {
       ),
     );
   }
-} 
+}
