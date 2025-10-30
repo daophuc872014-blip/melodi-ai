@@ -8,8 +8,9 @@ part of 'env.dart';
 
 // coverage:ignore-file
 // ignore_for_file: type=lint
+// generated_from: .env
 final class _Env {
-  static const String geminiApiKey = 'AIzaSyDAI-MzOvM7JvJd8LR4kpx8NhCnPheXME4';
+  static const String geminiApiKey = 'AIzaSyAtLlG3stALD9z1UYs_E6fOyHGnk9EPjxk';
 
-  static const String sunoApiKey = 'YOUR_SUNO_API_KEY_HERE';
+  static const String musicApiKey = 'AIzaSyBHbZbjxlHMvR6JboawyeJAXx_HE_OME2o';
 }

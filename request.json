@@ -1,0 +1,6 @@
+{
+  "instances": [
+    { "prompt": "a simple electronic music track" }
+  ],
+  "parameters": { "durationSeconds": 15 }
+}

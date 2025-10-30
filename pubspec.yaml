@@ -1,33 +1,69 @@
 name: melodi_ai
 description: "A new Flutter project."
+
+# Ngăn chặn việc vô tình publish package này lên pub.dev.
 publish_to: 'none'
+
+# Version của ứng dụng, tuân theo Semantic Versioning.
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: '>=3.4.0 <4.0.0' # Cập nhật SDK constraint để tương thích với các package mới nhất.
 
+# --- Dependencies Chính của Ứng dụng ---
 dependencies:
   flutter:
     sdk: flutter
-  envied: ^0.5.4+1
-  cupertino_icons: ^1.0.8
-  go_router: ^16.2.4
-  just_audio: ^0.10.5
-  rxdart: ^0.28.0
-  http: ^1.5.0
-  get_it: ^8.2.0
 
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # State Management
+  flutter_riverpod: ^2.5.1 # Cập nhật phiên bản mới nhất
+
+  # Service Locator / Dependency Injection
+  get_it: ^7.7.0 # Cập nhật phiên bản mới nhất
+
+  # Routing
+  go_router: ^14.2.0 # Cập nhật phiên bản mới nhất
+
+  # Networking & APIs
+  http: ^1.2.1 # Cập nhật phiên bản mới nhất
+  googleapis_auth: ^1.6.0 # Cập nhật phiên bản mới nhất
+
+  # Environment Variables
+  envied: ^0.5.4+1 # Cập nhật phiên bản mới nhất
+
+  # Audio Playback
+  just_audio: ^0.9.36 # Cập nhật phiên bản mới nhất
+
+  # Reactive Programming
+  rxdart: ^0.28.0
+
+  # File System
+  path_provider: ^2.1.3 # Cập nhật phiên bản mới nhất
+  audioplayers: ^6.5.1
+
+# --- Dependencies chỉ dùng cho Môi trường Phát triển ---
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  envied_generator: ^1.0.0
-  build_runner: ^2.4.13
+
+  # Code Generation
+  build_runner: ^2.4.10 # Cập nhật phiên bản mới nhất
+  envied_generator: ^0.5.4 # Chuyển từ dependencies và cập nhật
+
+  # Linter - Phân tích và đảm bảo chất lượng code
   flutter_lints: ^4.0.0
 
+# --- Cấu hình dành riêng cho Flutter ---
 flutter:
+  # Bật hỗ trợ Material Design.
   uses-material-design: true
 
+  # Khai báo các tài nguyên (assets) mà ứng dụng sẽ sử dụng.
   assets:
     - assets/audio/
     - assets/images/
     - .env
+    - melodi_ai_service_account.json
